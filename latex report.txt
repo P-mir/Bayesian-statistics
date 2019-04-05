@@ -1,0 +1,177 @@
+% Visionner le code LaTeX
+
+%% LyX 2.2.3 created this file. For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\setlength{\parskip}{\smallskipamount}
+\setlength{\parindent}{0pt}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\makeatother
+
+\usepackage{babel}
+\begin{document}
+
+\title{Bayesian Statistics Project}
+\maketitle
+
+\subsection{Interpretation of the Model Parameters}
+
+Setting $z_{i}=0$ and $x_{i}=39$, we obtain the equality
+\[
+log(\mu_{i}(x_{i},z_{i}))=\beta_{0}.
+\]
+Therefore, $\beta_{0}$ is the natural logarithm of the conditional
+mean of the number of days of absence of a subject given that it is
+a thirty-nine-year-old man.
+
+Setting $z_{i}=0$ again, we obtain the equality
+\[
+log(\mu_{i}(x_{i},z_{i}))=\beta_{0}+\beta_{1}(x_{i}-39).
+\]
+
+Therefore, $\beta_{1}$ is the increase of the natural logarithm of
+the conditional mean of the number of days of absence of a man if
+he grows one year older.
+
+Setting $z_{i}=1$ and $x_{i}=39$, we obtain the equality
+\[
+log(\mu_{i}(x_{i},z_{i}))=\beta_{0}+\alpha.
+\]
+Therefore, $\alpha$ is the difference between the natural logarithm
+of the conditional mean of the number of days of absence of a subject
+given that it is a thirty-nine-year-old woman and the natural logarithm
+of the conditional mean of the number of days of absence of a subject
+given that it is a thirty-nine-year-old man, i.e. $\beta_{0}$.
+
+Setting $z_{1}=1$, we obtain the equality
+\[
+log(\mu_{i}(x_{i},z_{i}))=\beta_{0}+\alpha+(\beta_{1}+\tau)(x_{i}-39).
+\]
+
+Therefore, $\tau$ is the difference between the increase of the natural
+logarithm of the conditional mean of the number of days of absence
+of a woman if she grows one year older and the analogous number if
+a man grows one year older, i.e. $\beta_{1}$.
+
+\newpage
+
+\underline{Alternative interpretation of $ \tau$} 
+
+The equation
+\[
+log(\mu_{i}(x_{i},z_{i}))=(\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39).
+\]
+is equivalent to
+\[
+\mu_{i}(x_{i},z_{i})=\exp((\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39)).
+\]
+
+Deriving $\mu_{i}(x_{i},z_{i}))$ with respect to $x_{i}$ we have
+\[
+ \frac{\partial \mu_{i}(x_{i},z_{i})}{\partial x_{i}} = (\beta_{1}+\tau z_{i})\exp((\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39))
+
+
+\qquad \qquad \qquad \quad \iff \frac{\partial\mu_{i}(x_{i},z_{i})}{\partial x_{i}} = (\beta_{1}+\tau z_{i}) \mu_{i}(x_{i},z_{i}).
+
+\qquad \qquad \qquad \quad \iff \tau z_{i}+\beta_{1}= \frac{1}{\mu_{i}(x_{i},z_{i})}\frac{\partial\mu_{i}(x_{i},z_{i})}{\partial x_{i} }
+\]
+
+If we multiply by 100 the equation we have
+\[
+100(\tau z_{i}+\beta_{1}) = \frac{100\frac{\partial \mu_{i}(x_{i},z_{i})}{\mu_{i}(x_{i},z_{i})}}{\partial x_{i}} = \frac{\%\Delta \mu_{i}(x_{i},z_{i})}{\partial x_{i}}
+
+\]
+Therefore,for z_{i}=1,\, $\tau$ can be interpreted as the increase in percentage points of the average increase number of days of absence of a woman  if
+she grows one year older, minus the average increase of the number of day of absence of a man if he grows one year older. If $\tau$>0, the average increase in the number of absences of a woman will be smaller as she grow of one year than the increase in the man's number of absences, and vice-versa.
+
+
+\subsection{Likelihood}
+
+Since the $Y_{i}'s$ are independent, the likelihood function for
+the reduced sample (the sample without the discarded rows) is given
+by the product
+\[
+\mathcal{L}(\alpha,\beta_{0},\beta_{1},\tau\mid\mathcal{D})=\prod_{i=1}^{92}\frac{e^{-\mu_{i}(z_{i},x_{i})}\mu_{i}(z_{i},x_{i})^{y_{i}}}{y_{i}}
+\]
+
+\[
+=\prod_{i=1}^{92}\frac{e^{-[e^{(\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39)}]}}{y_{i}!}[e^{(\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39)}]^{y_{i}}.
+\]
+
+Its (natural) logarithm equals
+\[
+\sum_{i=1}^{92}-[e^{(\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39)}]+y_{i}((\beta_{0}+\alpha z_{i})+(\beta_{1}+\tau z_{i})(x_{i}-39))-log(y_{i}!).
+\]
+
+Note that the R function \textit{nlm} performs minimisation, so we
+must apply it to the opposite of the logarithm of the likelihood rather
+than to the likelihood itself.
+
+Having used the R function nlm with the following options:
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Options & Values\tabularnewline
+\hline
+\hline
+Starting parameters & $(1,1,1,1)$\tabularnewline
+\hline
+Gradtol & $1e-6$\tabularnewline
+\hline
+fscale & $1$\tabularnewline
+\hline
+stepmax & $10$\tabularnewline
+\hline
+iterlim & $50$\tabularnewline
+\hline
+\end{tabular},
+\par\end{center}
+
+we obtained the following maximum likelihood estimators (rounded to
+the nearest hundredth):
+\[
+\alpha=\beta_{0}=0.97
+\]
+
+and
+\[
+\beta_{1}=\tau=0.29.
+\]
+
+\subsection{Non-informative Priors}
+
+For simplicity, we specify constant marginal priors for each parameter:
+say
+\[
+\pi(p)=3^{0.25},
+\]
+for each parameter $p\in\{\alpha,\beta_{0},\beta_{1},\tau\}$. These
+priors do not integrate to $1$ but, thanks to the contribution of
+the likelihood, they will not lead to an improper joint posterior
+distribution. In order to obtain the joint prior, we combine the marginal
+priors multiplicatively as if the parameters were independent a priori:
+\[
+\pi(\alpha,\beta_{0},\beta_{1},\tau)=\pi(\alpha)\pi(\beta_{0})\pi(\beta_{1})\pi(\tau)=3.
+\]
+
+
+
+\subsection{Metropolis Algorithm}
+
+See R script.
+
+
+\end{document}
+
+
+
+
